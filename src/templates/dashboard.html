@@ -1,0 +1,165 @@
+	<div class="row">
+		<div class="row alerts-container" data-ng-show="alerts.length">
+	  		<div class="col-xs-12">
+	    		<alert data-ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	  		</div>
+		</div>
+		<div class="row alerts-container" data-ng-show="showDownloadLink">
+			<div class="col-xs-12">
+				<alert type="success">
+					The request has been completed. Please
+					<a href={{reportDownloadRest}}>Click here</a> to download the report.
+		        </alert>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-6 col-xs-12">
+			<rd-widget>
+				<rd-widget-body>
+					<div class="widget-icon green pull-left">
+						<i class="fa fa-users"></i>
+					</div>
+					<div class="title">{{schemas.length}}</div>
+					<div class="comment">Schemas</div>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+		<div class="col-lg-3 col-md-6 col-xs-12">
+			<rd-widget>
+				<rd-widget-body>
+					<div class="widget-icon red pull-left">
+						<i class="fa fa-tasks"></i>
+					</div>
+					<div class="title">{{tables.length}}</div>
+					<div class="comment">Tables</div>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+		<div class="col-lg-3 col-md-6 col-xs-12">
+			<rd-widget>
+				<rd-widget-body>
+					<div class="widget-icon orange pull-left">
+						<i class="fa fa-sitemap"></i>
+					</div>
+					<div class="title">{{columnsCount}}</div>
+					<div class="comment">Columns</div>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+		<div class="col-lg-3 col-md-6 col-xs-12">
+			<rd-widget>
+				<rd-widget-body>
+					<div class="widget-icon blue pull-left">
+						<i class="fa fa-support"></i>
+					</div>
+					<div class="title">{{numberRecordsToBeProcessed}}</div>
+					<div class="comment">To be Processed</div>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-4">
+			<rd-widget>
+	      		<rd-widget-header icon="fa-database" title="Tables">
+	      		</rd-widget-header>
+	      		<rd-widget-body classes="medium no-padding">
+					<div class="table-responsive">
+
+						<table style="cursor:pointer" class="table table-condensed table-striped table-bordered table-hover no-margin">
+					        <thead>
+					        	<th>Schema Name</th>
+					            <th>Table Name</th>
+					        </thead>
+					        <tbody>
+					            <tr ng-repeat="element in tables" ng-include="getTablesTemplate(element)"  data-ng-click="showColumns(element, $index)" />
+					        </tbody>
+				    	</table>
+
+					    <script type="text/ng-template" id="displayTables">
+					    	<td>{{element.schema}}</td>
+					        <td>{{element.table}}</td>					        
+					    </script>
+
+					</div>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+
+		<div class="col-lg-8">
+			<rd-widget>
+				<rd-widget-header icon="fa-table" title="Columns">
+				</rd-widget-header>
+				<rd-widget-body classes="medium no-padding">
+					<div class="table-responsive">
+						<table class="table table-condensed table-striped table-bordered table-hover no-margin">
+					        <thead>
+					            <th>Column</th>
+					            <th>Type</th>
+					            <th>Regex</th>
+					            <th>Action</th>
+					        </thead>
+					        <tbody>
+					            <tr ng-repeat="element in currentColumnRow.columns" ng-include="getColumnsTemplate(element)" />
+					        </tbody>
+				    	</table>
+
+					    <script type="text/ng-template" id="display">
+					        <td>{{element.column}}</td>
+					        <td>{{element.type}}</td>
+					        <td>{{element.regex}}</td>
+					        <td>
+					            <button class="btn btn-default btn-sm" ng-click="editRow(element)">Edit</button>
+					        </td>
+					    </script>
+
+					    <script type="text/ng-template" id="edit">
+					        <td>{{selectedRow.column}}</td>
+					        <td>{{selectedRow.type}}</td>
+					        <td><textarea rows="5" class="form-control" placeholder="Regular Expression" ng-model="selectedRow.regex"/></textarea></td>
+					        <td>
+					            <button class="btn btn-primary btn-sm" ng-click="saveRow($index)">Save</button>
+					            <button class="btn btn-danger btn-sm" ng-click="resetSelectedRow()">Cancel</button>
+					        </td>
+					    </script>
+	        		</div>
+				</rd-widget-body>
+			<rd-widget>
+		</div>
+		<div class="col-lg-12">
+			<button id="processRequestButton" class="btn btn-success btn-lg" style="width:100%;" />
+		</div>
+		<div class="col-lg-12">
+			<button id="resetButton" id="resetButton" class="btn btn-default btn-lg" style="width:100%;">RESET</button>
+		</div>
+	<!--
+	<div class="row">
+		<div class="col-lg-6">
+	   		<rd-widget>
+	   			<rd-widget-header icon="fa-plus" title="Extras">
+	   				<button class="btn btn-sm btn-info">Button</button>
+	   			</rd-widget-header>
+	   			<rd-widget-body>
+					<div class="message">
+						This is a standard message which will also work the ".no-padding" class, I can also <span class="error">be an error message!</span>
+					</div>
+					<hr />
+					<div class="message">
+						<a href="http://angular-ui.github.io/bootstrap/" target="_blank">UI Bootstrap</a> is included, so you can use <a href="#" tooltip="I'm a tooltip!">tooltips</a> and all of the other native Bootstrap JS components!
+					</div>
+	   			</rd-widget-body>
+	   		</rd-widget>
+		</div>
+		<div class="col-lg-6">
+			<rd-widget>
+				<rd-widget-header icon="fa-cog fa-spin" title="Loading Directive">
+					<a href="http://tobiasahlin.com/spinkit/" target="_blank">SpinKit</a>
+				</rd-widget-header>
+				<rd-widget-body>
+					<rd-loading></rd-loading>
+				</rd-widget-body>
+			</rd-widget>
+		</div>
+		-->
+	</div>
+</div>
